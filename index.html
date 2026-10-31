@@ -13,77 +13,61 @@ body{margin:0;background:var(--bg);color:var(--text)}
 .card{background:var(--card);margin:10px;border-radius:12px;padding:14px;box-shadow:0 2px 6px rgba(0,0,0,.06);border:1px solid var(--border)}
 .label{font-size:11px;opacity:.7;text-transform:uppercase;margin:6px 0 3px}
 input,select,textarea{width:100%;padding:10px 11px;border:1px solid var(--border);border-radius:8px;font-size:14px}
+textarea{min-height:70px}
 button{padding:10px 14px;border:0;border-radius:8px;background:var(--accent);color:#fff;font-weight:600;cursor:pointer}
 button.secondary{background:#e9ecef;color:var(--text)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .hidden{display:none}
-.badge{display:inline-block;padding:3px 8px;border-radius:20px;font-size:11px;background:#e6f4ea}
-.sig-pad{border:1px dashed #aaa;border-radius:8px;width:100%;height:140px;touch-action:none}
-table{width:100%;border-collapse:collapse;font-size:13px} th,td{border:1px solid #e5e7eb;padding:6px;text-align:left}
+.badge{padding:3px 8px;border-radius:20px;font-size:11px;background:#e6f4ea}
+.sig-pad{border:1px dashed #aaa;border-radius:8px;width:100%;height:140px;touch-action:none;background:#fff}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{border:1px solid #e5e7eb;padding:6px;text-align:left}
 #loginPage{max-width:380px;margin:30px auto}
 </style>
 </head>
 <body>
-<div class="header">
-  <h1>NEUTRON ENERGY KENYA</h1>
-  <div><span id="userBadge" class="badge hidden"></span><button id="logoutBtn" class="secondary hidden">Logout</button></div>
-</div>
-
-<div id="loginPage">
-  <div class="card">
-    <h3>Technician Login - Secure</h3>
-    <p class="label">Username / Phone</p><input id="loginUser" placeholder="e.g., technician1 or 0181628290">
-    <p class="label">Password</p><input id="loginPwd" type="password" placeholder="Create or enter">
-    <p class="label">Role</p><select id="loginRole"><option value="technician">Technician</option><option value="admin">Office Admin</option></select>
-    <button id="loginBtn" style="width:100%;margin-top:12px">Enter Job Card System</button>
-  </div>
-</div>
-
+<div class="header"><h1>NEUTRON ENERGY KENYA</h1><div><span id="userBadge" class="badge hidden"></span><button id="logoutBtn" class="secondary hidden">Logout</button></div></div>
+<div id="loginPage"><div class="card"><h3>Technician Login - Secure</h3><p class="label">Username / Phone</p><input id="loginUser" placeholder="e.g., 0181628290"><p class="label">Password</p><input id="loginPwd" type="password"><p class="label">Role</p><select id="loginRole"><option value="technician">Technician</option><option value="admin">Office Admin</option></select><button id="loginBtn" style="width:100%;margin-top:12px">Enter</button><p class="label">No bypass - SHA-256 hash</p></div></div>
 <div id="app" class="hidden">
-  <div class="card">
-    <h3>Job Card <span id="jobNoDisplay" style="color:#1677ff"></span></h3>
-    <p class="label">Job Number (Auto NEK-YYYY-####)</p><input id="jobNumber" readonly>
-    <div class="grid2"><div><p class="label">Date</p><input id="jobDate" type="date"></div><div><p class="label">Technician</p><input id="techName"></div></div>
-    <p class="label">Customer Name</p><input id="customerName" list="customerList"><datalist id="customerList"></datalist>
-    <div class="grid2"><div><p class="label">Phone</p><input id="customerPhone" type="tel"></div><div><p class="label">Site</p><input id="siteLocation"></div></div>
-    <p class="label">Generator Details</p><input id="generatorDetails" list="generatorList"><datalist id="generatorList"></datalist>
-    <p class="label">Service Type</p><select id="serviceType"><option>Routine Service</option><option>Breakdown</option><option>Installation</option><option>Inspection</option><option>Other</option></select>
-    <p class="label">Work Done / Fault</p><textarea id="workDone"></textarea>
-    <div class="grid3"><input id="partsUsed" placeholder="Parts"><input id="labourHours" type="number" placeholder="Hours"><input id="nextServiceDate" type="date"></div>
-    <div class="grid2" style="margin-top:10px">
-      <div><p class="label">Tech Signature</p><canvas id="techSig" class="sig-pad"></canvas><button class="secondary" onclick="clearSig('techSig')" style="width:100%">Clear</button></div>
-      <div><p class="label">Customer Signature</p><canvas id="custSig" class="sig-pad"></canvas><button class="secondary" onclick="clearSig('custSig')" style="width:100%">Clear</button></div>
-    </div>
-    <p class="label">Photos</p><input id="photoInput" type="file" accept="image/*" multiple>
-    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><button id="saveBtn" style="flex:1">Save Job</button><button id="pdfBtn" class="secondary" style="flex:1">PDF</button><button id="waOfficeBtn" class="secondary" style="flex:1">WA Office 0181628290</button><button id="waCustomerBtn" class="secondary" style="flex:1">WA Customer</button></div>
-    <div style="display:flex;gap:8px;margin-top:8px"><button id="newJobBtn" class="secondary" style="flex:1">New Job</button><button id="backupBtn" class="secondary" style="flex:1">Backup</button></div>
-  </div>
-  <div class="card"><h3>Dashboard</h3><table id="jobsTable"><thead><tr><th>Job No</th><th>Date</th><th>Customer</th><th>Generator</th><th>Status</th></tr></thead><tbody></tbody></table></div>
+<div class="card">
+<h3>Job Card <span id="jobNoDisplay" style="color:#1677ff"></span> <span id="saveStatus" class="badge">Not saved</span></h3>
+<p class="label">Job Number</p><input id="jobNumber" readonly>
+<div class="grid2"><div><p class="label">Date</p><input id="jobDate" type="date"></div><div><p class="label">Technician</p><input id="techName"></div></div>
+<p class="label">Customer Name</p><input id="customerName" list="customerList"><datalist id="customerList"></datalist>
+<div class="grid2"><div><p class="label">Phone</p><input id="customerPhone" type="tel"></div><div><p class="label">Site</p><input id="siteLocation"></div></div>
+<p class="label">Generator Details</p><input id="generatorDetails" list="generatorList"><datalist id="generatorList"></datalist>
+<p class="label">Service Type</p><select id="serviceType"><option>Routine Service</option><option>Breakdown</option><option>Installation</option><option>Inspection</option></select>
+<p class="label">Work Done</p><textarea id="workDone"></textarea>
+<div class="grid3"><input id="partsUsed" placeholder="Parts"><input id="labourHours" type="number" placeholder="Hours"><input id="nextServiceDate" type="date"></div>
+<div class="grid2" style="margin-top:10px"><div><p class="label">Tech Sig</p><canvas id="techSig" class="sig-pad"></canvas><button class="secondary" onclick="clearSig('techSig')" style="width:100%">Clear</button></div><div><p class="label">Customer Sig</p><canvas id="custSig" class="sig-pad"></canvas><button class="secondary" onclick="clearSig('custSig')" style="width:100%">Clear</button></div></div>
+<p class="label">Photos</p><input id="photoInput" type="file" accept="image/*" multiple>
+<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><button id="saveBtn" style="flex:1">Save Job</button><button id="pdfBtn" class="secondary" style="flex:1">PDF</button><button id="waOfficeBtn" class="secondary" style="flex:1">WA Office 0181628290</button><button id="waCustomerBtn" class="secondary" style="flex:1">WA Customer</button></div>
+<div style="display:flex;gap:8px;margin-top:8px"><button id="newJobBtn" class="secondary" style="flex:1">New Job</button><button id="backupBtn" class="secondary" style="flex:1">Backup to Phone</button></div>
 </div>
-
+<div class="card"><h3>Dashboard</h3><table id="jobsTable"><thead><tr><th>Job No</th><th>Date</th><th>Customer</th><th>Generator</th></tr></thead><tbody></tbody></table></div>
+<div class="card"><p class="label">Link: <span id="linkDisplay"></span><br>Office: 0181628290</p></div>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-// SECURITY: NO BYPASS
 async function hashPwd(p){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
 const $=id=>document.getElementById(id)
 let db=JSON.parse(localStorage.getItem('neutron_db_v2')||'{"jobs":[],"seq":0,"customers":[],"generators":[]}')
-let currentPhotos=[];let sigPads={}
+let currentPhotos=[],sigPads={}
 function todayISO(){return new Date().toISOString().slice(0,10)}
 function genJobNo(){const y=new Date().getFullYear();db.seq=(db.seq||0)+1;return `NEK-${y}-${String(db.seq).padStart(4,'0')}`}
-function initSig(id){const c=$(id),ctx=c.getContext('2d');const r=c.getBoundingClientRect();c.width=r.width*2;c.height=r.height*2;ctx.scale(2,2);ctx.lineWidth=2;ctx.lineCap='round';let drawing=false,last=null;function pos(e){const rect=c.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:t.clientX-rect.left,y:t.clientY-rect.top}}c.addEventListener('mousedown',e=>{drawing=true;last=pos(e)});c.addEventListener('mousemove',e=>{if(!drawing)return;const p=pos(e);ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(p.x,p.y);ctx.stroke();last=p});c.addEventListener('mouseup',()=>drawing=false);c.addEventListener('touchstart',e=>{drawing=true;last=pos(e);e.preventDefault()},{passive:false});c.addEventListener('touchmove',e=>{if(!drawing)return;const p=pos(e);ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(p.x,p.y);ctx.stroke();last=p;e.preventDefault()},{passive:false});c.addEventListener('touchend',()=>drawing=false);sigPads[id]=()=>c.toDataURL()}
-function clearSig(id){const c=$(id),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height)}
-function renderJobs(){const tbody=$('jobsTable').querySelector('tbody');tbody.innerHTML=db.jobs.slice().reverse().map(j=>`<tr onclick="loadJob('${j.jobNumber}')" style="cursor:pointer"><td>${j.jobNumber}</td><td>${j.jobDate}</td><td>${j.customerName}</td><td>${j.generatorDetails}</td><td>${j.status}</td></tr>`).join('');$('customerList').innerHTML=db.customers.map(c=>`<option value="${c}">`).join('');$('generatorList').innerHTML=db.generators.map(g=>`<option value="${g}">`).join('');localStorage.setItem('neutron_db_v2',JSON.stringify(db))}
-function collectForm(){return{jobNumber:$('jobNumber').value,jobDate:$('jobDate').value,techName:$('techName').value,customerName:$('customerName').value,customerPhone:$('customerPhone').value.replace(/\D/g,''),siteLocation:$('siteLocation').value,generatorDetails:$('generatorDetails').value,serviceType:$('serviceType').value,workDone:$('workDone').value,partsUsed:$('partsUsed').value,labourHours:$('labourHours').value,nextServiceDate:$('nextServiceDate').value,techSig:sigPads['techSig']?sigPads['techSig']():null,custSig:sigPads['custSig']?sigPads['custSig']():null,photos:currentPhotos,status:'Saved',updatedBy:localStorage.getItem('nek_user'),updatedAt:new Date().toISOString(),audit:[...(db.jobs.find(j=>j.jobNumber===$('jobNumber').value)?.audit||[]),{by:localStorage.getItem('nek_user'),at:new Date().toISOString()}]}}
+function initSig(id){const c=$(id),ctx=c.getContext('2d');const rect=c.getBoundingClientRect();c.width=rect.width*2;c.height=rect.height*2;ctx.scale(2,2);ctx.lineWidth=2;ctx.lineCap='round';let d=false,l=null;function pos(e){const r=c.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:t.clientX-r.left,y:t.clientY-r.top}}c.addEventListener('mousedown',e=>{d=true;l=pos(e)});c.addEventListener('mousemove',e=>{if(!d)return;const p=pos(e);ctx.beginPath();ctx.moveTo(l.x,l.y);ctx.lineTo(p.x,p.y);ctx.stroke();l=p});c.addEventListener('mouseup',()=>d=false);c.addEventListener('touchstart',e=>{d=true;l=pos(e);e.preventDefault()},{passive:false});c.addEventListener('touchmove',e=>{if(!d)return;const p=pos(e);ctx.beginPath();ctx.moveTo(l.x,l.y);ctx.lineTo(p.x,p.y);ctx.stroke();l=p;e.preventDefault()},{passive:false});c.addEventListener('touchend',()=>d=false);sigPads[id]=()=>c.toDataURL()}
+function clearSig(id){const c=$(id),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height)}window.clearSig=clearSig
+function renderJobs(){const tb=$('jobsTable').querySelector('tbody');tb.innerHTML=db.jobs.slice().reverse().map(j=>`<tr onclick="loadJob('${j.jobNumber}')" style="cursor:pointer"><td>${j.jobNumber}</td><td>${j.jobDate}</td><td>${j.customerName}</td><td>${j.generatorDetails}</td></tr>`).join('');$('customerList').innerHTML=db.customers.map(c=>`<option value="${c}">`).join('');$('generatorList').innerHTML=db.generators.map(g=>`<option value="${g}">`).join('');localStorage.setItem('neutron_db_v2',JSON.stringify(db))}
+function collectForm(){return{jobNumber:$('jobNumber').value,jobDate:$('jobDate').value,techName:$('techName').value,customerName:$('customerName').value,customerPhone:$('customerPhone').value.replace(/\D/g,''),siteLocation:$('siteLocation').value,generatorDetails:$('generatorDetails').value,serviceType:$('serviceType').value,workDone:$('workDone').value,partsUsed:$('partsUsed').value,labourHours:$('labourHours').value,nextServiceDate:$('nextServiceDate').value,techSig:sigPads['techSig']?sigPads['techSig']():null,custSig:sigPads['custSig']?sigPads['custSig']():null,photos:currentPhotos,status:'Saved',updatedBy:localStorage.getItem('nek_user'),updatedAt:new Date().toISOString()}}
 function loadJob(no){const j=db.jobs.find(x=>x.jobNumber===no);if(!j)return;$('jobNumber').value=j.jobNumber;$('jobNoDisplay').innerText=j.jobNumber;$('jobDate').value=j.jobDate;$('techName').value=j.techName;$('customerName').value=j.customerName;$('customerPhone').value=j.customerPhone;$('siteLocation').value=j.siteLocation;$('generatorDetails').value=j.generatorDetails;$('serviceType').value=j.serviceType;$('workDone').value=j.workDone;$('partsUsed').value=j.partsUsed;$('labourHours').value=j.labourHours;$('nextServiceDate').value=j.nextServiceDate||'';window.scrollTo(0,0)}window.loadJob=loadJob
-$('loginBtn').onclick=async()=>{const user=$('loginUser').value.trim(),pwd=$('loginPwd').value,role=$('loginRole').value;if(!user||!pwd){alert('Enter user/pass');return}const h=await hashPwd(pwd);const auth=JSON.parse(localStorage.getItem('nek_auth')||'{}');if(!auth[user]){auth[user]={hash:h,role:role};localStorage.setItem('nek_auth',JSON.stringify(auth))}else{if(auth[user].hash!==h){alert('Wrong password');return}}localStorage.setItem('nek_user',user);localStorage.setItem('nek_role',auth[user].role);enterApp(user,auth[user].role)}
-function enterApp(user,role){$('loginPage').classList.add('hidden');$('app').classList.remove('hidden');$('logoutBtn').classList.remove('hidden');$('userBadge').classList.remove('hidden');$('userBadge').innerText=user+' ('+role+')';$('jobDate').value=todayISO();$('jobNumber').value=genJobNo();$('jobNoDisplay').innerText=$('jobNumber').value;initSig('techSig');initSig('custSig');renderJobs()}
+$('loginBtn').onclick=async()=>{const u=$('loginUser').value.trim(),p=$('loginPwd').value,r=$('loginRole').value;if(!u||!p){alert('Enter user/pass');return}const h=await hashPwd(p);const auth=JSON.parse(localStorage.getItem('nek_auth')||'{}');if(!auth[u]){auth[u]={hash:h,role:r};localStorage.setItem('nek_auth',JSON.stringify(auth))}else if(auth[u].hash!==h){alert('Wrong password');return}localStorage.setItem('nek_user',u);localStorage.setItem('nek_role',auth[u].role);enterApp(u,auth[u].role)}
+function enterApp(u,r){$('loginPage').classList.add('hidden');$('app').classList.remove('hidden');$('logoutBtn').classList.remove('hidden');$('userBadge').classList.remove('hidden');$('userBadge').innerText=u+' ('+r+')';$('linkDisplay').innerText=location.href;$('jobDate').value=todayISO();$('jobNumber').value=genJobNo();$('jobNoDisplay').innerText=$('jobNumber').value;initSig('techSig');initSig('custSig');renderJobs()}
 $('logoutBtn').onclick=()=>{localStorage.removeItem('nek_user');location.reload()}
-$('saveBtn').onclick=()=>{const d=collectForm();if(!d.customerName||!d.generatorDetails){alert('Customer & Generator required');return}const idx=db.jobs.findIndex(j=>j.jobNumber===d.jobNumber);if(idx>=0)db.jobs[idx]=d;else db.jobs.push(d);if(!db.customers.includes(d.customerName))db.customers.push(d.customerName);if(!db.generators.includes(d.generatorDetails))db.generators.push(d.generatorDetails);renderJobs();alert('Saved '+d.jobNumber)}
+$('saveBtn').onclick=()=>{const d=collectForm();if(!d.customerName||!d.generatorDetails){alert('Customer & Generator required');return}const i=db.jobs.findIndex(j=>j.jobNumber===d.jobNumber);if(i>=0)db.jobs[i]=d;else db.jobs.push(d);if(!db.customers.includes(d.customerName))db.customers.push(d.customerName);if(!db.generators.includes(d.generatorDetails))db.generators.push(d.generatorDetails);$('saveStatus').innerText='Saved '+d.jobNumber;renderJobs()}
 $('newJobBtn').onclick=()=>{$('jobNumber').value=genJobNo();$('jobNoDisplay').innerText=$('jobNumber').value;$('customerName').value='';$('workDone').value='';clearSig('techSig');clearSig('custSig');currentPhotos=[]}
 $('photoInput').onchange=e=>{for(let f of e.target.files){const r=new FileReader();r.onload=ev=>currentPhotos.push(ev.target.result);r.readAsDataURL(f)}}
 $('pdfBtn').onclick=()=>{const {jsPDF}=window.jspdf;const doc=new jsPDF();const d=collectForm();let y=10;doc.text('NEUTRON ENERGY KENYA - JOB CARD',10,y);y+=8;doc.setFontSize(10);doc.text(`Job No: ${d.jobNumber} Date: ${d.jobDate} Tech: ${d.techName}`,10,y);y+=6;doc.text(`Customer: ${d.customerName} Phone: ${d.customerPhone}`,10,y);y+=6;doc.text(`Generator: ${d.generatorDetails}`,10,y);y+=6;const lines=doc.splitTextToSize(`Work: ${d.workDone} Parts: ${d.partsUsed} Hours: ${d.labourHours} Next: ${d.nextServiceDate}`,180);doc.text(lines,10,y);doc.save(`${d.jobNumber}.pdf`)}
-function waSend(toCust){const d=collectForm();const phone=toCust?d.customerPhone:'0181628290';const msg=`NEUTRON ENERGY Job ${d.jobNumber} ${d.customerName} ${d.generatorDetails} ${d.workDone} Next: ${d.nextServiceDate}`;let clean=phone.replace(/\D/g,'');if(clean.startsWith('0'))clean='254'+clean.slice(1);window.open(`https://wa.me/${clean}?text=${encodeURIComponent(msg)}`,'_blank')}
+function waSend(toCust){const d=collectForm();let phone=toCust?d.customerPhone:'0181628290';let clean=phone.replace(/\D/g,'');if(clean.startsWith('0'))clean='254'+clean.slice(1);const msg=`NEUTRON ENERGY Job ${d.jobNumber} Customer:${d.customerName} Generator:${d.generatorDetails} Work:${d.workDone} Next:${d.nextServiceDate} Tech:${d.techName} Link:${location.href}`;window.open(`https://wa.me/${clean}?text=${encodeURIComponent(msg)}`,'_blank')}
 $('waOfficeBtn').onclick=()=>waSend(false);$('waCustomerBtn').onclick=()=>waSend(true)
 $('backupBtn').onclick=()=>{const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`neutron-backup-${todayISO()}.json`;a.click()}
 </script>
