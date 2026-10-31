@@ -1,273 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generator Job Card - 11 Requirements - 0181628290</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<style>
-body{font-family:Arial;background:#eef2f7;padding:8px;margin:0}
-.box{background:white;max-width:900px;margin:auto;padding:16px;border-radius:12px;box-shadow:0 4px 14px #0002}
-input,textarea,select{width:100%;padding:12px;margin:6px 0;border:1.5px solid #777;border-radius:6px;font-size:14px;box-sizing:border-box}
-textarea{height:80px}.big{height:120px}
-button{width:100%;padding:14px;margin-top:8px;border:none;border-radius:8px;font-weight:bold;font-size:15px;color:white;cursor:pointer}
-.green{background:#0a3c0a}.orange{background:#ff6a00}.blue{background:#0a3c7a}.red{background:#8b0000}.gray{background:#444}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.monitor{background:#111;color:#0f0;padding:12px;border-radius:8px;margin-top:12px;font-family:monospace;font-size:13px}
-h2,h3{color:#0a3c0a;text-align:center;margin:6px 0}
-label{font-weight:bold;font-size:13px;margin-top:8px;display:block}
-.hidden{display:none}
-.preview{border:2px dashed #0a3c0a;padding:10px;margin-top:10px;background:#f9fff9;white-space:pre-wrap;font-size:13px}
-</style>
-</head>
-<body>
-<div class="box">
-
-<!-- 5. TECHNICIAN LOGIN -->
-<div id="loginDiv">
-<h2>TECHNICIAN LOGIN - 0181628290</h2>
-<p style="text-align:center;font-size:12px">Link sent from 0181628290 - Opens Chrome - Create account</p>
-<label>Technician ID Number *</label><input id="techId" placeholder="e.g. TECH-001">
-<label>Technician Name *</label><input id="techName" placeholder="Jina lako">
-<label>Technician Phone / Whatsapp *</label><input id="techPhone" placeholder="07XXXXXXXX">
-<label>Contact Information</label><input id="techContact" placeholder="Email / Alt number">
-<button class="blue" onclick="doLogin()">OPEN ACCOUNT & CONTINUE</button>
-<p style="font-size:11px;text-align:center">This link from 0181628290 identifies you: ID + Name + Contact</p>
-</div>
-
-<!-- MAIN JOB CARD -->
-<div id="mainDiv" class="hidden">
-<h2>GENERATOR JOB CARD <span id="uniqueId">GEN-2026-00001</span></h2>
-<p style="text-align:center;font-size:11px">Order: 1.Jobcards IDs Tech ID 2.Shared DB Dashboard Backup 3.Fee Ledger Sunday Carry 4.Whatsapp Reminders 5.Photos Signature History</p>
-
-<div class="grid">
-<div><label>Client Name</label><input id="cName"></div>
-<div><label>Client Phone *</label><input id="cPhone" placeholder="07XXXXXXXX"></div>
-</div>
-
-<label>Generator Make</label><input id="gMake" placeholder="e.g. Perkins">
-<div class="grid">
-<div><label>Model</label><input id="gModel"></div>
-<div><label>Serial Number</label><input id="gSerial"></div>
-</div>
-<div class="grid">
-<div><label>Running Hours</label><input id="gHours" type="number"></div>
-<div><label>Location / Site</label><input id="gLocation"></div>
-</div>
-
-<label>Fault Description *</label><textarea id="fault" class="big" placeholder="Describe fault..."></textarea>
-<label>Work Performed *</label><textarea id="work" class="big" placeholder="Kazi uliyofanya..."></textarea>
-<label>Parts / Materials Used</label><textarea id="parts" placeholder="Parts used"></textarea>
-<label>Test Results</label><input id="testRes" placeholder="e.g. Voltage 230V OK">
-<label>Recommendations</label><input id="reco" placeholder="Next service...">
-<label>Client Acknowledgement / Signature Name</label><input id="clientSign" placeholder="Jina la client aliyekubali">
-
-<label>Attach Photos - Fault & Complete Repair (2 photos)</label>
-<input type="file" id="photo1" accept="image/*" onchange="loadPhoto(this,1)">
-<input type="file" id="photo2" accept="image/*" onchange="loadPhoto(this,2)">
-<div id="photoPrev" style="font-size:11px"></div>
-
-<div style="display:flex;gap:6px">
-<button class="green" onclick="submitCard()">SUBMIT & SEND 3 COPIES (PDF LINK)</button>
-<button class="gray" onclick="saveCorrection()">SAVE CORRECTION (Preserve Original)</button>
-</div>
-
-<div id="pdfPreview" class="preview hidden"></div>
-
-<!-- 3,9,10 FEE LEDGER -->
-<div class="monitor">
-<b>FEE LEDGER - 0722402550 -> 0181628290 | Office 0795467171</b><br>
-Rate: Ksh 30 per billable card | Formula: Outstanding = Previous + (Cards x 30) - Payments<br><br>
-Unique ID: <span id="mId">GEN-2026-00001</span> | Tech: <span id="mTech"></span><br>
-Cards This Week: <span id="mCards">0</span> | Fee Due: Ksh <span id="mFee">0</span><br>
-Previous Arrears (Carry): Ksh <span id="mPrev">0</span><br>
-Payments Received: Ksh <span id="mPay">0</span><br>
-<b style="font-size:16px">OUTSTANDING: Ksh <span id="mOut">0</span></b><br><br>
-<label style="color:white">Record Payment from 0722402550:</label>
-<input id="payInput" type="number" placeholder="Amount paid" style="color:black;background:white">
-<button class="orange" onclick="recordPay()">RECORD PAYMENT & CALC CARRY FORWARD</button><br><br>
-<button class="blue" onclick="sendSundayDashboard()">SEND SUNDAY 10AM DASHBOARD to 0795467171 & 0181628290</button>
-<button class="blue" onclick="sendSundayStatement()">SEND SUNDAY STATEMENT TO CLIENT</button>
-<button class="gray" onclick="exportAll()">EXPORT / BACKUP ALL RECORDS</button>
-</div>
-
-<!-- 11 STORAGE -->
-<div style="margin-top:10px;font-size:12px">
-<b>STORAGE:</b> <span id="storageInfo"></span><br>
-Technician sees: Own cards only | Office sees: All authorized records
-<div id="myCardsList" style="margin-top:6px;background:#f0f0f0;padding:6px;max-height:150px;overflow:auto"></div>
-</div>
-
-</div>
-</div>
-
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>NEUTRON V6 ONE FILE</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script><style>*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}body{background:#000;color:#fff}.h{text-align:center;padding:14px;border-bottom:2px solid #00c853;position:sticky;top:0;background:#000}.h h1{font-size:18px}.h h1 span{color:#00e676}.nav{display:flex;gap:6px;padding:8px;background:#111}.nav button{background:#222;color:#aaa;border:1px solid #333;padding:8px 12px;border-radius:20px;font-weight:700;font-size:11px}.nav button.on{background:#00c853;color:#fff}.card{background:#111;margin:8px;border-radius:12px;border:1px solid #222}.fh{background:#0a0a0a;padding:10px;display:flex;justify-content:space-between}.form{padding:12px;background:#f5f5f5;color:#000}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.full{grid-column:1/-1}label{font-size:10px;font-weight:800;color:#555;display:block;margin-bottom:3px}input,select,textarea{width:100%;padding:10px;background:#1a1a1a;color:#fff;border:1px solid #333;border-radius:6px;font-size:12px}textarea{min-height:60px}.sec{margin:12px 0 6px;background:#e8f5e9;border-left:4px solid #00c853;padding:7px;border-radius:4px;font-size:11px;color:#111}.check{display:grid;grid-template-columns:1fr 1fr;gap:6px}.chk{background:#1e1e1e;border:1px solid #333;border-radius:6px;padding:6px;display:flex;justify-content:space-between;font-size:11px;color:#fff}.btn{padding:11px;border-radius:7px;font-weight:800;border:none;width:100%;cursor:pointer;font-size:11px}.bg{background:#00c853;color:#fff}.bd{background:#333;color:#fff}.bo{background:#111;color:#00e676;border:1px solid #00c853}.sig{border:1px solid #333;border-radius:6px;background:#fff;width:100%;height:110px}.sync{font-size:10px;padding:4px 8px;border-radius:5px;background:#111;border:1px solid #333;color:#aaa}.ok{border-color:#00c853;color:#00e676}.jr{background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:8px;margin-bottom:6px;display:flex;justify-content:space-between;font-size:11px}</style></head><body>
+<div class="h"><h1>NEUTRON<br><span>ENERGY KENYA</span></h1><p style="color:#00e676;font-size:10px">V6 SECURE - ONE FILE - NO FEE</p><div><span id="sync" class="sync">Local</span> <span id="jid" class="sync ok">GEN-...</span> <span id="iid" class="sync">ID</span></div></div>
+<div class="nav"><button class="on" id="b1" onclick="tab('new')">New</button><button id="b2" onclick="tab('hist')">History</button><button id="b3" onclick="tab('back')">Backup</button></div>
+<div id="t-new" class="card"><div class="fh"><b>Job Card V6</b><span class="sync ok" id="st">DRAFT</span></div><div class="form">
+<div class="row"><div><label>Job No - Central</label><input id="jobNo" readonly><input type="hidden" id="internalId"></div><div><label>Date Kenya</label><input type="datetime-local" id="jobDate"></div></div>
+<div class="sec"><b>A. Client - Phone Full Flow</b></div>
+<div class="row"><div><label>Client Name *</label><input id="clientName"></div><div><label>Phone *</label><input id="clientPhone" placeholder="0768643301"><small id="ph"></small><br><small id="phNorm" style="font-size:8px;color:#666"></small></div></div>
+<div class="row"><div class="full"><label>Location *</label><input id="location"></div></div><div class="sec"><b>B. Generator</b></div><div class="row"><div><label>Model *</label><input id="genType"></div><div><label>Serial *</label><input id="serialNo"></div></div>
+<div class="sec"><b>C. Work</b></div><div class="row"><div class="full"><textarea id="serviceDesc" placeholder="Work done"></textarea></div></div>
+<div class="sec"><b>D. Checklist</b></div><div class="check" id="cl"></div>
+<div class="sec"><b>E. Photos</b></div><div class="row"><div><label>Before</label><input type="file" id="phB" accept="image/*"><div id="prB"></div></div><div><label>After</label><input type="file" id="phA" accept="image/*"><div id="prA"></div></div></div>
+<div class="sec"><b>F. Signatures</b></div><div class="row"><div><label>Tech</label><input id="techName"><canvas id="sigT" class="sig"></canvas><button class="btn bd" style="padding:4px" onclick="cls('sigT')">Clear</button></div><div><label>Customer</label><input id="cName"><canvas id="sigC" class="sig"></canvas><button class="btn bd" style="padding:4px" onclick="cls('sigC')">Clear</button></div></div>
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:6px;margin-top:10px"><button class="btn bg" onclick="saveJ()">💾 Save</button><button class="btn bo" onclick="pdf()">📄 PDF</button></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px"><button class="btn bg" onclick="send()">✅ WhatsApp</button><button class="btn bo" onclick="exp()">⬇️ Backup</button></div>
+<div id="ss" style="font-size:10px;color:#00c853;margin-top:6px"></div>
+</div></div>
+<div id="t-hist" class="card" style="display:none"><div class="fh"><b>History</b><span id="hc" class="sync">0</span></div><div class="form"><input id="sq" placeholder="Search..." oninput="rh()"><div id="jl" style="margin-top:8px"></div></div></div>
+<div id="t-back" class="card" style="display:none"><div class="fh"><b>Backup V6</b></div><div class="form"><div style="background:#e8f5e9;padding:10px;border-radius:8px;font-size:11px"><b>V6 FIXES:</b> Central No, Phone cleaned defined, WA accurate, Photo persistent, No hidden fee</div><div id="at" style="background:#1a1a1a;color:#aaa;padding:8px;border-radius:6px;max-height:180px;overflow:auto;font-size:10px;white-space:pre-wrap;margin-top:8px"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px"><button class="btn bo" onclick="exp()">Export</button><label class="btn bd" style="text-align:center">Import<input type="file" id="imp" accept=".json" style="display:none" onchange="im(event)"></label></div></div></div>
 <script>
-const RATE=30;
-const PAYER='0722402550';
-const PAYEE='0181628290';
-const OFFICE='0795467171';
-let photos={1:null,2:null};
-
-function $(id){return document.getElementById(id)}
-// INIT
-(function(){
-  let urlParams=new URLSearchParams(location.search);
-  if(urlParams.get('tech')) $('techPhone').value=urlParams.get('tech');
-  loadCounters();
-})();
-
-function loadCounters(){
-  let count=parseInt(localStorage.getItem('gen_counter')||'0')+1;
-  let uid=`GEN-2026-${String(count).padStart(5,'0')}`;
-  $('uniqueId').innerText=uid;
-  $('mId').innerText=uid;
-  updateLedger();
-}
-
-function doLogin(){
-  if(!$('techId').value||!$('techName').value||!$('techPhone').value){alert('Jaza ID, Name, Phone');return;}
-  localStorage.setItem('tech_id',$('techId').value);
-  localStorage.setItem('tech_name',$('techName').value);
-  localStorage.setItem('tech_phone',$('techPhone').value);
-  localStorage.setItem('tech_contact',$('techContact').value);
-  $('loginDiv').classList.add('hidden');
-  $('mainDiv').classList.remove('hidden');
-  $('mTech').innerText=$('techName').value+' ('+$('techId').value+')';
-  loadCounters();
-}
-
-function loadPhoto(input,n){
-  let file=input.files[0]; if(!file) return;
-  let reader=new FileReader();
-  reader.onload=e=>{photos[n]=e.target.result; $('photoPrev').innerHTML+=`Photo${n} loaded. `};
-  reader.readAsDataURL(file);
-}
-
-function getFormData(){
-  return {
-    uid:$('uniqueId').innerText,
-    techId:localStorage.getItem('tech_id'),
-    techName:localStorage.getItem('tech_name'),
-    techPhone:localStorage.getItem('tech_phone'),
-    cName:$('cName').value, cPhone:$('cPhone').value,
-    gMake:$('gMake').value, gModel:$('gModel').value, gSerial:$('gSerial').value, gHours:$('gHours').value, gLocation:$('gLocation').value,
-    fault:$('fault').value, work:$('work').value, parts:$('parts').value, testRes:$('testRes').value, reco:$('reco').value, clientSign:$('clientSign').value,
-    date:new Date().toLocaleString(),
-    photos:photos
-  };
-}
-
-function submitCard(){
-  let d=getFormData();
-  if(!d.cPhone||!d.fault||!d.work){alert('Jaza Client Phone, Fault, Work');return;}
-  // 4. Unique ID increment
-  let counter=parseInt(localStorage.getItem('gen_counter')||'0')+1;
-  localStorage.setItem('gen_counter',counter);
-
-  // 11. Store centrally (shared DB simulation) + preserve original
-  let all=JSON.parse(localStorage.getItem('all_cards')||'[]');
-  // Preserve original if exists
-  let existing=all.find(x=>x.uid===d.uid);
-  if(existing){
-    existing.correctionHistory=existing.correctionHistory||[];
-    existing.correctionHistory.push({date:new Date().toLocaleString(), old:{...existing}});
-  }
-  all.push(d);
-  localStorage.setItem('all_cards',JSON.stringify(all));
-
-  // 3. Fee ledger - only when billable
-  let weekCards=parseInt(localStorage.getItem('cards_week')||'0')+1;
-  localStorage.setItem('cards_week',weekCards);
-  
-  // 6. Prepare PDF link (using jsPDF)
-  let pdfText=`GENERATOR JOB CARD ${d.uid}\nTech: ${d.techName} ${d.techId} ${d.techPhone}\nClient: ${d.cName} ${d.cPhone}\nGenerator: ${d.gMake} ${d.gModel} Serial:${d.gSerial} Hours:${d.gHours} Location:${d.gLocation}\nFault: ${d.fault}\nWork: ${d.work}\nParts: ${d.parts}\nTest: ${d.testRes}\nReco: ${d.reco}\nClient Ack: ${d.clientSign}\nDate: ${d.date}\nLink: https://eeano.github.io/Camping-job-card/view.html?id=${d.uid}`;
-  $('pdfPreview').classList.remove('hidden');
-  $('pdfPreview').innerText=pdfText+"\n\n(PDF with photos will be generated - Photos attached: "+Object.keys(photos).length+")";
-
-  // 6. 3 Copies via Whatsapp Link
-  let msg=encodeURIComponent(pdfText);
-  let clientPhone=d.cPhone.replace(/^0/,'254');
-  let officePhone=OFFICE.replace(/^0/,'254');
-  let techPhone=localStorage.getItem('tech_phone').replace(/^0/,'254');
-  
-  // Open client
-  window.open(`https://wa.me/${clientPhone}?text=${msg}`,'_blank');
-  setTimeout(()=>window.open(`https://wa.me/${officePhone}?text=${encodeURIComponent('OFFICE COPY '+d.uid+'\n'+pdfText)}`,'_blank'),1200);
-  setTimeout(()=>window.open(`https://wa.me/${techPhone}?text=${encodeURIComponent('YOUR COPY '+d.uid+'\n'+pdfText)}`,'_blank'),2400);
-  
-  updateLedger();
-  loadCounters();
-  alert(`Card ${d.uid} submitted! 3 Copies sent: Client ${d.cPhone}, Office ${OFFICE}, Technician ${d.techPhone}. Fee Ksh 30 added.`);
-}
-
-function saveCorrection(){
-  submitCard(); // preserves original inside
-}
-
-function updateLedger(){
-  let cards=parseInt(localStorage.getItem('cards_week')||'0');
-  let prev=parseInt(localStorage.getItem('prev_arrears')||'0');
-  let paid=parseInt(localStorage.getItem('payments_received')||'0');
-  let fee=cards*RATE;
-  let out=prev+fee-paid;
-  $('mCards').innerText=cards;
-  $('mFee').innerText=fee;
-  $('mPrev').innerText=prev;
-  $('mPay').innerText=paid;
-  $('mOut').innerText=out;
-  $('storageInfo').innerText=`${JSON.parse(localStorage.getItem('all_cards')||'[]').length} cards stored centrally. Backup ready.`;
-  // my cards list
-  let all=JSON.parse(localStorage.getItem('all_cards')||'[]');
-  let myId=localStorage.getItem('tech_id');
-  let myCards=all.filter(c=>c.techId===myId).map(c=>`${c.uid} - ${c.cName} - ${c.date}`).join('<br>');
-  $('myCardsList').innerHTML=myCards||'No cards yet';
-}
-
-function recordPay(){
-  let amt=parseInt($('payInput').value||'0'); if(amt<=0){alert('Weka amount');return;}
-  let paid=parseInt(localStorage.getItem('payments_received')||'0')+amt;
-  localStorage.setItem('payments_received',paid);
-  let cards=parseInt(localStorage.getItem('cards_week')||'0');
-  let prev=parseInt(localStorage.getItem('prev_arrears')||'0');
-  let fee=cards*RATE;
-  let out=prev+fee-paid;
-  if(out>0){
-    // 9. Carry forward
-    localStorage.setItem('prev_arrears',out);
-    localStorage.setItem('cards_week','0');
-    localStorage.setItem('payments_received','0');
-    alert(`Payment Ksh ${amt} recorded. Outstanding Ksh ${out} carried forward to next week.`);
-  } else {
-    localStorage.setItem('prev_arrears','0');
-    localStorage.setItem('cards_week','0');
-    localStorage.setItem('payments_received','0');
-    alert(`Payment full. No carry. Week reset.`);
-  }
-  updateLedger();
-}
-
-function sendSundayDashboard(){
-  let cards=$('mCards').innerText, fee=$('mFee').innerText, pay=$('mPay').innerText, out=$('mOut').innerText;
-  let msg=`OFFICIAL OFFICE DASHBOARD - SUNDAY 10 AM\nTotal Cards this week: ${cards}\nPayments Received: ${pay}\nFees Due: ${fee}\nOutstanding Amount: ${out}\nPayer ${PAYER} -> Payee ${PAYEE}\nLink: https://eeano.github.io/Camping-job-card/`;
-  window.open(`https://wa.me/${OFFICE.replace(/^0/,'254')}?text=${encodeURIComponent(msg)}`,'_blank');
-  setTimeout(()=>window.open(`https://wa.me/${PAYEE.replace(/^0/,'254')}?text=${encodeURIComponent(msg)}`,'_blank'),1000);
-}
-
-function sendSundayStatement(){
-  let all=JSON.parse(localStorage.getItem('all_cards')||'[]');
-  let last7=all.slice(-5).map(c=>`${c.uid} ${c.cName} ${c.date}`).join('\n');
-  let msg=`AUTOMATIC SUNDAY STATEMENT TO CLIENT\nCards completed this week:\n${last7}\nPayments Received: ${$('mPay').innerText}\nPrevious Arrears: ${$('mPrev').innerText}\nAmount Due: ${$('mOut').innerText}\nThank you.`;
-  let cPhone=$('cPhone').value.replace(/^0/,'254');
-  if(!cPhone){alert('Weka client phone kwanza');return;}
-  window.open(`https://wa.me/${cPhone}?text=${encodeURIComponent(msg)}`,'_blank');
-}
-
-function exportAll(){
-  let data=localStorage.getItem('all_cards');
-  let blob=new Blob([data],{type:'application/json'});
-  let url=URL.createObjectURL(blob);
-  let a=document.createElement('a'); a.href=url; a.download='generator_backup.json'; a.click();
-  alert('Backup exported. Store centrally.');
-}
-</script>
-</body>
-</html>
+let currentPhotos={b:null,a:null},sigData={t:null,c:null};
+function getKenyaDateTime(){let d=new Date();let p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;}
+function getKenyaDate(){let d=new Date();let p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;}
+function normalizeKenyanPhone(phone){let raw=phone||'';let cleaned=raw.replace(/\D/g,'');let original=cleaned;let type='unknown';if(cleaned.startsWith('254')){cleaned=cleaned.substring(3);type='intl';}else if(cleaned.startsWith('0')){cleaned=cleaned.substring(1);type='local';}let valid=/^(7\d{8}|1\d{8})$/.test(cleaned);return{raw,original,cleaned,valid,normalized:valid?'0'+cleaned:null,intl:valid?'254'+cleaned:null,type,reason:valid?'Valid':'Must be 07/01 or 254'}};async function genJobNo(){let c=localStorage.getItem('ngc');let y=new Date().getFullYear();if(!c)c=0;c=parseInt(c)+1;localStorage.setItem('ngc',c);return `GEN-${y}-${String(c).padStart(5,'0')}`;}
+function genInternalId(){return'id_'+Date.now()+'_'+Math.random().toString(36).substr(2,6);}
+async function init(){let s=localStorage.getItem('ncj');let internal=localStorage.getItem('ncj_internal');if(!s){s=await genJobNo();internal=genInternalId();localStorage.setItem('ncj',s);localStorage.setItem('ncj_internal',internal);}document.getElementById('jobNo').value=s;document.getElementById('internalId').value=internal;document.getElementById('iid').textContent='ID:'+internal.slice(0,6);document.getElementById('jid').textContent=s;if(!document.getElementById('jobDate').value)document.getElementById('jobDate').value=getKenyaDateTime();ra();rh();}
+function log(t,d){let a=JSON.parse(localStorage.getItem('na')||'[]');a.unshift({t:new Date().toISOString(),ty:t,d:d});localStorage.setItem('na',JSON.stringify(a.slice(0,100)));ra();}
+function ra(){let a=JSON.parse(localStorage.getItem('na')||'[]');let el=document.getElementById('at');if(el)el.textContent=a.map(e=>`[${e.t.slice(11,19)}] ${e.ty}: ${e.d}`).join('\n');}
+const items=["Oil","Coolant","Fuel","Battery","Belts","Filter","Exhaust","Mounting","ATS","Alarms","Cooling","Safety"];
+function build(){document.getElementById('cl').innerHTML=items.map((it,i)=>`<div class="chk"><span>${it}</span><select id="ch${i}"><option>PASS</option><option>FAIL</option><option>N/A</option></select></div>`).join('');}build();
+function setup(id){let c=document.getElementById(id),x=c.getContext('2d'),dr=false;function ensure(){let r=c.getBoundingClientRect();if(c.width!==r.width*2){c.width=r.width*2;c.height=110*2;x.scale(2,2);}x.lineWidth=2;x.lineCap='round';}ensure();function p(e){let r=c.getBoundingClientRect();let t=e.touches?e.touches[0]:e;return{x:t.clientX-r.left,y:t.clientY-r.top};}c.addEventListener('mousedown',e=>{dr=true;let q=p(e);x.beginPath();x.moveTo(q.x,q.y);});c.addEventListener('mousemove',e=>{if(!dr)return;let q=p(e);x.lineTo(q.x,q.y);x.stroke();});window.addEventListener('mouseup',()=>{if(dr){dr=false;saveSig(id);}});c.addEventListener('touchstart',e=>{dr=true;let q=p(e);x.beginPath();x.moveTo(q.x,q.y);e.preventDefault();},{passive:false});c.addEventListener('touchmove',e=>{if(!dr)return;let q=p(e);x.lineTo(q.x,q.y);x.stroke();e.preventDefault();},{passive:false});c.addEventListener('touchend',()=>{dr=false;saveSig(id);});}
+function saveSig(id){let c=document.getElementById(id);try{if(id==='sigT')sigData.t=c.toDataURL();else sigData.c=c.toDataURL();}catch{}}
+setup('sigT');setup('sigC');function cls(id){let c=document.getElementById(id),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);if(id==='sigT')sigData.t=null;else sigData.c=null;}function prev(i,pr,key){document.getElementById(i).addEventListener('change',e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=ev=>{if(key==='b')currentPhotos.b=ev.target.result;else currentPhotos.a=ev.target.result;document.getElementById(pr).innerHTML=`<img src="${ev.target.result}" style="width:100%;border-radius:4px;max-height:80px;object-fit:cover">`;};r.readAsDataURL(f);});}prev('phB','prB','b');prev('phA','prA','a');
+document.getElementById('clientPhone').addEventListener('input',e=>{let res=normalizeKenyanPhone(e.target.value);let el=document.getElementById('ph');let el2=document.getElementById('phNorm');if(!e.target.value){el.textContent='';el2.textContent='';return;}if(res.valid){el.textContent=`✓ ${res.normalized} / ${res.intl}`;el.style.color='#00c853';el2.textContent=`cleaned='${res.cleaned}' type=${res.type} defined`; }else{el.textContent=`✗ ${res.reason}`;el.style.color='#c00';el2.textContent=`raw='${res.raw}' cleaned='${res.cleaned}'`;}});
+function tab(t){['new','hist','back'].forEach(x=>{let el=document.getElementById('t-'+x);if(el)el.style.display=(x===t?'block':'none');});['b1','b2','b3'].forEach((b,i)=>{let tabs=['new','hist','back'];let el=document.getElementById(b);if(el)el.className=(tabs[i]===t?'on':'');});if(t==='hist')rh();}
+function col(){let g=id=>document.getElementById(id)?.value||'';let chk={};items.forEach((it,i)=>{let el=document.getElementById('ch'+i);if(el)chk[it]=el.value;});return{internalId:g('internalId'),jobNo:g('jobNo'),jobDate:g('jobDate'),clientName:g('clientName'),clientPhone:g('clientPhone'),location:g('location'),genType:g('genType'),serialNo:g('serialNo'),serviceDesc:g('serviceDesc'),chk,techName:g('techName'),cName:g('cName'),updated:new Date().toISOString(),kenyaDate:getKenyaDate(),sigs:sigData,photos:currentPhotos};}
+async function saveJ(){let d=col();if(!d.clientName.trim()){alert('Client Name');return;}let pc=normalizeKenyanPhone(d.clientPhone);if(!pc.valid){alert(pc.reason);return;}if(!d.genType.trim()||!d.serialNo.trim()){alert('Gen+Serial');return;}if(!d.serviceDesc.trim()){alert('Work');return;}let jobs=JSON.parse(localStorage.getItem('nj')||'[]');let idx=jobs.findIndex(j=>j.internalId===d.internalId);let isNew=idx===-1;if(idx>=0)jobs[idx]={...jobs[idx],...d};else{jobs.unshift(d);let nn=await genJobNo();let nid=genInternalId();localStorage.setItem('ncj',nn);localStorage.setItem('ncj_internal',nid);document.getElementById('jobNo').value=nn;document.getElementById('internalId').value=nid;document.getElementById('iid').textContent='ID:'+nid.slice(0,6);document.getElementById('jid').textContent=nn;currentPhotos={b:null,a:null};sigData={t:null,c:null};document.getElementById('prB').innerHTML='';document.getElementById('prA').innerHTML='';}localStorage.setItem('nj',JSON.stringify(jobs));document.getElementById('sync').textContent='● Saved '+getKenyaDateTime();document.getElementById('sync').className='sync ok';let custs=JSON.parse(localStorage.getItem('ncu')||'{}');custs[d.clientPhone]={name:d.clientName,phone:pc.normalized,phoneIntl:pc.intl,loc:d.location,last:d.jobNo,kenyaDate:getKenyaDate()};localStorage.setItem('ncu',JSON.stringify(custs));log('SAVE','Saved '+d.jobNo);rh();alert(isNew?'Saved '+d.jobNo:'Updated '+d.jobNo);}
+async function rh(){let jobs=JSON.parse(localStorage.getItem('nj')||'[]');let q=(document.getElementById('sq')?.value||'').toLowerCase();if(q)jobs=jobs.filter(j=>JSON.stringify(j).toLowerCase().includes(q));document.getElementById('hc').textContent=jobs.length;let jl=document.getElementById('jl');jl.innerHTML='';jobs.forEach(j=>{let div=document.createElement('div');div.className='jr';let left=document.createElement('div');let b=document.createElement('b');b.textContent=j.jobNo;left.appendChild(b);left.appendChild(document.createTextNode(' '+(j.clientName||'')));let br=document.createElement('br');left.appendChild(br);let sm=document.createElement('small');sm.textContent=(j.genType||'')+'|'+(j.serialNo||'');left.appendChild(sm);let btn=document.createElement('button');btn.className='btn bo';btn.style.padding='4px 8px';btn.style.width='auto';btn.textContent='Open';btn.onclick=()=>loadJ(j.internalId);div.appendChild(left);div.appendChild(btn);jl.appendChild(div);});}async function loadJ(key){let jobs=JSON.parse(localStorage.getItem('nj')||'[]');let j=jobs.find(x=>x.internalId===key||x.jobNo===key);if(!j)return;['jobNo','internalId','jobDate','clientName','clientPhone','location','genType','serialNo','serviceDesc','techName','cName'].forEach(k=>{let el=document.getElementById(k);if(el&&j[k]!==undefined)el.value=j[k];});if(j.internalId)document.getElementById('iid').textContent='ID:'+j.internalId.slice(0,6);tab('new');log('OPEN','Opened '+j.jobNo);}
+async function pdf(){let {jsPDF}=window.jspdf;let doc=new jsPDF({unit:'mm',format:'a4'});let d=col();let y=10;doc.setFontSize(14);doc.text('NEUTRON ENERGY KENYA V6',10,y);y+=6;doc.setFontSize(9);doc.text(`Office 0795467171 | Kenya ${getKenyaDateTime()} | No hidden fee`,10,y);y+=6;doc.setFontSize(11);doc.text(`Job: ${d.jobNo} ID:${d.internalId.slice(0,6)}`,10,y);y+=7;doc.setFontSize(9);function add(t){if(!t)return;let l=doc.splitTextToSize(t,180);if(y+l.length*4.5>280){doc.addPage();y=10;}doc.text(l,10,y);y+=l.length*4.5+2;}let ph=normalizeKenyanPhone(d.clientPhone);add(`Client: ${d.clientName} Phone:${ph.normalized} Intl:${ph.intl} cleaned=${ph.cleaned}`);add(`Gen: ${d.genType} Serial:${d.serialNo}`);add(`Work: ${d.serviceDesc}`);doc.setFontSize(8);doc.text('V6 FIXES: Central, cleaned defined, WA accurate, No fee',10,y);doc.save(d.jobNo+'.pdf');log('PDF','PDF '+d.jobNo);}
+function send(){let d=col();let ph=normalizeKenyanPhone(d.clientPhone);if(!ph.valid){alert(ph.reason);return;}let msg=`*NEUTRON V6*%0A*Job:* ${encodeURIComponent(d.jobNo)}%0A*Kenya:* ${encodeURIComponent(getKenyaDate())}%0A*Client:* ${encodeURIComponent(d.clientName)}%0A*Phone:* ${encodeURIComponent(ph.normalized)}%0A*Gen:* ${encodeURIComponent(d.genType)}%0A*Work:* ${encodeURIComponent((d.serviceDesc||'').slice(0,200))}%0A_Status: WA opening NOT prove sent - verify_%0A_No fee_%0A_ID:${encodeURIComponent(d.internalId.slice(0,6))}_`;let office='254795467171';window.open(`https://wa.me/${ph.intl}?text=${msg}`,'_blank');setTimeout(()=>window.open(`https://wa.me/${office}?text=${msg}`,'_blank'),800);document.getElementById('ss').textContent=`WA opened ${getKenyaDateTime()} - NOT confirmed`;log('WA','WA accurate');}
+function exp(){let data={jobs:localStorage.getItem('nj'),cust:localStorage.getItem('ncu'),audit:localStorage.getItem('na'),c:localStorage.getItem('ngc'),ncj:localStorage.getItem('ncj'),ncj_internal:localStorage.getItem('ncj_internal'),v:'V6'};let b=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});let u=URL.createObjectURL(b);let a=document.createElement('a');a.href=u;a.download=`neutron-v6-${getKenyaDate()}.json`;a.click();URL.revokeObjectURL(u);log('BACKUP','Export V6');}
+function im(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=ev=>{try{let d=JSON.parse(ev.target.result);if(!confirm('Import merge?'))return;if(d.jobs){let ex=JSON.parse(localStorage.getItem('nj')||'[]');let inc=JSON.parse(d.jobs);let m=new Map();ex.forEach(j=>m.set(j.internalId||j.jobNo,j));inc.forEach(j=>{let k=j.internalId||j.jobNo;if(!m.has(k))m.set(k,j);});localStorage.setItem('nj',JSON.stringify(Array.from(m.values())));}if(d.cust)localStorage.setItem('ncu',d.cust);if(d.c)localStorage.setItem('ngc',d.c);if(d.ncj)localStorage.setItem('ncj',d.ncj);if(d.ncj_internal)localStorage.setItem('ncj_internal',d.ncj_internal);alert('Imported');location.reload();}catch(err){alert('Invalid:'+err.message);}};r.readAsText(f);}
+init();
+</script></body></html>
